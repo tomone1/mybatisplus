@@ -91,7 +91,7 @@ create table t_student_selfcard
     native                   varchar(60) not null comment  '籍贯',
     issue_date            date not null comment '发证日期',
     end_date              date not null comment '结束日期',
-    not                        varchar(1024) comment '备注',
+    note                        varchar(1024) comment '备注',
     primary key(id)
 
  );

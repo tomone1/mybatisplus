@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+    <!--定义别名-->
+    <typeAliases>
+        <typeAlias type="com.diamond.pojo.Role" alias="role"></typeAlias>
+    </typeAliases>
+    <!-- 定义数据库信息-->
+    <environments default="mybatis">
+        <environment id="mybatis">
+            <!--采用jdbc 事物管理-->
+            <transactionManager type="JDBC"></transactionManager>
+            <dataSource type="POOLED">
+                <property name="driver" value="com.mysql.jdbc.Driver"></property>
+                <property name="url" value="jdbc:mysql://localhost:3306/mybatis"></property>
+                <property name="username" value="name"></property>
+                <property name="password" value="123456"></property>
+            </dataSource>
+        </environment>
+    </environments>
+    <!-- 定义映射器-->
+
+</configuration>
