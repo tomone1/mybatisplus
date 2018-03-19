@@ -21,5 +21,8 @@
         </environment>
     </environments>
     <!-- 定义映射器-->
+    <mappers >
+        <mapper resource="mapper/RoleMapper.xml"></mapper>
 
+    </mappers>
 </configuration>
