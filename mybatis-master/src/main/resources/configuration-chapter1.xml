@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+ <settings>
+    <setting name="logImpl" value="STDOUT_LOGGING" />
+ </settings>
+    <!--定义别名-->
+    <typeAliases>
+        <typeAlias type="com.diamond.pojo.User" alias="user"></typeAlias>
+    </typeAliases>
+    <plugins>
+        <plugin interceptor="com.plugin.PagingInterceptor">
+            <property name="page.limit" value="100"></property>
+        </plugin>
+    </plugins>
+    <!-- 定义数据库信息-->
+    <environments default="development">
+        <environment id="development">
+            <!--采用jdbc 事物管理-->
+            <transactionManager type="jdbc"></transactionManager>
+            <dataSource type="POOLED">
+                <property name="driver" value="com.mysql.jdbc.Driver"></property>
+                <property name="url" value="jdbc:mysql://localhost:3306/mybatis"></property>
+                <property name="username" value="root"></property>
+                <property name="password" value="123456"></property>
+            </dataSource>
+        </environment>
+
+    </environments>
+
+    <!-- 定义映射器-->
+    <mappers >
+        <mapper resource="mapper/UserMapper.xml"></mapper>
+
+    </mappers>
+</configuration>

@@ -1,5 +1,6 @@
 package com.diamond.pojo;
 
+
 import lombok.Data;
 
 /**
@@ -11,9 +12,10 @@ public class BaseModel {
   /*
   * 编号
   * */
-  private int id;
+
+  protected int id;
   /*
   * 备注
   * */
-  private String note;
+  protected String note;
 }

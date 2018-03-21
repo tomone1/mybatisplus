@@ -1,3 +1,4 @@
+
 create table T_ROLE
 ( id int(20) not null auto_increment comment '编号',
  role_name varchar(60) not null comment '角色名称',
@@ -22,7 +23,7 @@ create table T_USER_ROLE
   role_id int(20) not null comment '角色编号',
   primary key (user_id,role_id)
 );
-alter table T_USER_ROLE add constraint FK_Reference_1 foreign key(use_id)
+alter table T_USER_ROLE add constraint FK_Reference_1 foreign key(user_id)
 references T_USER(id) on delete restrict on update restrict;
 alter table T_USER_ROLE add constraint FK_Reference_2 foreign key(role_id)
 references T_ROLE(id) on delete restrict on update restrict;
@@ -35,7 +36,8 @@ create table t_lecture
 (
   id                      int(20) not null auto_increment comment '编号',
   lecture_name   varchar(60) not null comment '课程名称',
-  note                 varchar(1024) comment '备注'
+  note                 varchar(1024) comment '备注',
+primary key(id)
 );
 
 create table t_student
@@ -44,7 +46,7 @@ create table t_student
     cname          varchar(60) not null comment '学生姓名',
     sex                tinyint(4) not null comment '性别',
     selfcard_no   int(20) not null  comment '学生证号',
-    note              varchar(1024) comment '备注'
+    note              varchar(1024) comment '备注',
     primary key(id)
 );
 create table t_student_health_female
