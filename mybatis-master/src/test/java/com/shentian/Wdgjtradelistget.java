@@ -213,7 +213,7 @@ public class Wdgjtradelistget {
   }
   public static void main(String[] args) throws Exception {
 
-    String[] tokens={"58242c4c341444519e98dce94ed74d79"};//,"58242c4c341444519e98dce94ed74d79","d10c3d88bd984707bfae92c68a4fcd2e"
+    String[] tokens={"9a68d15e10c444b392f8977fd3508ab5"};//,"58242c4c341444519e98dce94ed74d79","d10c3d88bd984707bfae92c68a4fcd2e"
    List list=new ArrayList(Arrays.asList("森田药妆海外旗舰店"));
     for (int i = 0; i <list.size() ; i++) {
       System.out.println(list.get(i));

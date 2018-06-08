@@ -75,11 +75,13 @@ public class WdgjTradeListApi {
           }
         } else if ("0".equals(map.get("returncode"))) {
           JsonTradeRootBean jsonTradeRootBean = JSON.parseObject(json, JsonTradeRootBean.class);
+          if(jsonTradeRootBean.getDatalist().size()>0){
+            pageNo++;
+          }
           //  log.info(""+jsonTradeRootBean.getReturncode());
           if (jsonTradeRootBean.getDatalist(pageMap.get(WdgjInfoUtil.SHOPIDS).toString()).size() > 0) {
             try {
               wdgjTradeInfoServices.saveTradeInfo(jsonTradeRootBean.getDatalist(pageMap.get(WdgjInfoUtil.SHOPIDS).toString()));
-              pageNo++;
               sumNum += Integer.parseInt(jsonTradeRootBean.getReturninfo());
               sumSingNum += Integer.parseInt(jsonTradeRootBean.getReturninfo());
               log.info("每页的数量 pageNum{},单总数量sumSingNum{},店铺名[{}],归档类型[{}]", jsonTradeRootBean.getReturninfo(), sumSingNum,pageMap.get(WdgjInfoUtil.PROJECT_NAME),pageMap.get(WdgjInfoUtil.SEARCHTYPE));
@@ -96,12 +98,20 @@ public class WdgjTradeListApi {
             pageMap.put(WdgjInfoUtil.ENDTIME,null);
             isContimue = false;
           }else {
-            isContimue = false;
+            /*
+             没有数据继续
+             没有数据继续
+            * */
+            isContimue = true;
           }
+        }else{
+          isContimue=false;
         }
       }
       pageMap.put(WdgjInfoUtil.PAGENO,pageNo);
+      if(invocationSingleNum>0){
       wdgjPageLogService.save(pageMap);// 更改页码 开始日期 结束日期
+      }
       log.info("工程名[{}]归档类型[{}]订单调用的次数是 invocationSingleNum:{},存储的数量 sumSingNum :{}",pageMap.get(WdgjInfoUtil.PROJECT_NAME) ,pageMap.get(WdgjInfoUtil.SEARCHTYPE),invocationSingleNum, sumSingNum);
       sumSingNum=0;
       invocationSingleNum=0;
