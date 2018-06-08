@@ -25,7 +25,8 @@
         tradetime,
         shopname,
         goodstotal,
-        tradenick) VALUES
+        tradenick,
+        zip) VALUES
         <foreach collection="list" item="tradeInfoDto" index="index"
         open="" close="" separator=",">
             (
@@ -46,7 +47,9 @@
             #{tradeInfoDto.tradetime},
             #{tradeInfoDto.shopname},
             #{tradeInfoDto.goodstotal},
-            #{tradeInfoDto.tradenick}
+            #{tradeInfoDto.tradenick},
+            #{tradeInfoDto.zip}
+
             )
     </foreach>
 
@@ -96,17 +99,43 @@
     <!--客户去重-->
     <delete id="distinctCustomer">
        truncate temp_id;
-        INSERT INTO temp_id(SELECT id from wdgj_trade_info_temp tt WHERE EXISTS(SELECT
-        1    from (SELECT tradenick,MIN(id) ids from wdgj_trade_info_temp
+       truncate wdgj_customer_info_temp;
+       INSERT INTO  wdgj_customer_info_temp (SELECT * FROM wdgj_trade_info_temp);
+
+        INSERT INTO temp_id(SELECT id from wdgj_customer_info_temp tt WHERE EXISTS(SELECT
+        1    from (SELECT tradenick,MIN(id) ids from wdgj_customer_info_temp
         GROUP BY tradenick HAVING count(0)>1
-        ) t WHERE t.tradenick=tt.tradenick and tt.id!=t.ids));
+        ) t WHERE t.tel=tt.tel and tt.id!=t.ids));
     insert into temp_id
-     (SELECT t.id from wdgj_trade_info_temp t,wdgj_trade_info tt where
-      tt.tradenick=t.tradenick);
-       DELETE FROM wdgj_trade_info_temp where id in(SELECT id FROM temp_id);
+     (SELECT t.id from wdgj_customer_info_temp t,wdgj_trade_info tt where
+      tt.tel=t.tel);
+       DELETE FROM wdgj_customer_info_temp where id in(SELECT id FROM temp_id);
     </delete>
     <!--客户的添加-->
     <insert id="moveCustomer">
-
+        INSERT  INTO  wdgj_customer_info(tradenick,
+	  sndto,
+	  tel,
+	  province,
+	  city,
+	  town,
+	  adr,
+	  zip) VALUES (SELECT
+        tradenick,
+        sndto,
+        tel,
+        province,
+        city,
+        town,
+        adr,
+        zip
+        FROM wdgj_customer_info_temp)
     </insert>
+    <!--客户信息的修改-->
+    <!--<update id="updateCustomerInfo">-->
+      <!--truncate temp_id;-->
+      <!--INSERT INTO temp_id(SELECT DISTINCT tel from wdgj_trade_info_temp);-->
+      <!--update wdgj_customer_info t set sndto-->
+      <!--SELECT * FROM  wdgj_trade_info t,temp_id tt WHERE t.tel=tt.id  GROUP  tel,nickname,-->
+    <!--</update>-->
 </mapper>

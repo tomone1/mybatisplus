@@ -32,6 +32,7 @@ public class WdgjTradeInfo {
   private String shopname;
   private String goodstotal;
   private String tradenick;
+  private String zip;
   private List<WdgjTradeItemInfo> goodslist;
 
   public List<WdgjTradeItemInfo> getGoodslist() {

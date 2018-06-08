@@ -81,6 +81,7 @@ public class WdgjTradeListApi {
           log.info("链接重试{}", e);
         }
         Map map = JSON.parseObject(json, Map.class);
+        log.info(json);
         wdgjReturnTradeService=getWdgjReturnTradeService(json);
         wdgjReturnTradeService.setContimue(isContimue);
         wdgjReturnTradeService.setContinueNum(ContinueNum);

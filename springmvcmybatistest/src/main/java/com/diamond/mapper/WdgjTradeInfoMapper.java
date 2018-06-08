@@ -20,4 +20,8 @@ public interface WdgjTradeInfoMapper {
   public void moveTrade();
   public void distinctCustomer();
   public void moveCustomer();
+  /*
+  * 修改部分客户信息
+  * */
+  public void updateCustomerInfo();
 }
