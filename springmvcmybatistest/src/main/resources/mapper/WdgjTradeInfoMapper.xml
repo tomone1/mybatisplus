@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.diamond.mapper.WdgjTradeInfoMapper">
+    <update id="trunctateWdgjTradeInfo">
+        truncate wdgj_trade_info_temp;
+        truncate wdgj_trade_item_info_temp;
+        truncate temp_id;
+    </update>
+    <insert id="saveWdgjTradeInfo" parameterType="list">
+        INSERT INTO wdgj_trade_info_temp (
+        id,
+        shopid,
+        trade_no,
+        tradeno2,
+        tradestatus,
+        sndto,
+        province,
+        city,
+        town,
+        adr,
+        tel,
+        remark,
+        logisticlistno,
+        logisticname,
+        tradetime,
+        shopname,
+        goodstotal,
+        tradenick) VALUES
+        <foreach collection="list" item="tradeInfoDto" index="index"
+        open="" close="" separator=",">
+            (
+            #{tradeInfoDto.id},
+            #{tradeInfoDto.shopid},
+            #{tradeInfoDto.trade_no},
+            #{tradeInfoDto.tradeno2},
+            #{tradeInfoDto.tradestatus},
+            #{tradeInfoDto.sndto},
+            #{tradeInfoDto.province},
+            #{tradeInfoDto.city},
+            #{tradeInfoDto.town},
+            #{tradeInfoDto.adr},
+            #{tradeInfoDto.tel},
+            #{tradeInfoDto.remark},
+            #{tradeInfoDto.logisticlistno},
+            #{tradeInfoDto.logisticname},
+            #{tradeInfoDto.tradetime},
+            #{tradeInfoDto.shopname},
+            #{tradeInfoDto.goodstotal},
+            #{tradeInfoDto.tradenick}
+            )
+    </foreach>
+
+
+    </insert>
+    <insert id="saveWdgjTradeIntemInfo" parameterType="list">
+        INSERT INTO wdgj_trade_item_info_temp (
+        id,
+        goodsno,
+        goodsname,
+        goodscount,
+        price,
+        goodsmoney,
+        order_id
+        ) VALUES
+        <foreach collection="list" item="tradeItemInfoDto" index="index"
+                 open="" close="" separator=",">
+            (
+            #{tradeItemInfoDto.id},
+            #{tradeItemInfoDto.goodsno},
+            #{tradeItemInfoDto.goodsname},
+            #{tradeItemInfoDto.goodscount},
+            #{tradeItemInfoDto.price},
+            #{tradeItemInfoDto.goodsmoney},
+            #{tradeItemInfoDto.order_id}
+            )
+        </foreach>
+    </insert>
+    <!-- 去重-->
+    <delete id="distinctTrade">
+        truncate temp_id;
+        INSERT INTO temp_id(SELECT id from wdgj_trade_info_temp tt WHERE EXISTS(SELECT
+        1    from (SELECT tradeno2,MIN(id) ids from wdgj_trade_info_temp
+        GROUP BY tradeno2 HAVING count(0)>1
+        ) t WHERE t.tradeno2=tt.tradeno2 and tt.id!=t.ids));
+    insert into temp_id
+     (SELECT t.id from wdgj_trade_info_temp t,wdgj_trade_info tt where
+      tt.tradeno2=t.tradeno2);
+    DELETE FROM wdgj_trade_info_temp where id in(SELECT id FROM temp_id);
+    DELETE FROM wdgj_trade_item_info_temp where id in(SELECT id FROM temp_id);
+    </delete>
+    <!--添加 -->
+    <insert id="moveTrade">
+      insert into wdgj_trade_info (SELECT * from wdgj_trade_info_temp);
+      insert into wdgj_trade_item_info (SELECT * from wdgj_trade_item_info_temp);
+    </insert>
+    <!--客户去重-->
+    <delete id="distinctCustomer">
+       truncate temp_id;
+        INSERT INTO temp_id(SELECT id from wdgj_trade_info_temp tt WHERE EXISTS(SELECT
+        1    from (SELECT tradenick,MIN(id) ids from wdgj_trade_info_temp
+        GROUP BY tradenick HAVING count(0)>1
+        ) t WHERE t.tradenick=tt.tradenick and tt.id!=t.ids));
+    insert into temp_id
+     (SELECT t.id from wdgj_trade_info_temp t,wdgj_trade_info tt where
+      tt.tradenick=t.tradenick);
+       DELETE FROM wdgj_trade_info_temp where id in(SELECT id FROM temp_id);
+    </delete>
+    <!--客户的添加-->
+    <insert id="moveCustomer">
+
+    </insert>
+</mapper>

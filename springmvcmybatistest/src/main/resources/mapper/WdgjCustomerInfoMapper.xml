@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.diamond.mapper.WdgjCustomerInfoMapper">
+    <insert id="saveWdgjCustomerInfoBatch" parameterType="list">
+        INSERT INTO wdgj_customer_info (nickname, tel, regtime, memberid, email, zip, province, city, town, ad) VALUES
+        <foreach collection="list" item="customerInfoDto" index="index"
+                 open="" close="" separator=",">
+            (#{customerInfoDto.nickname},
+            #{customerInfoDto.tel},
+            #{customerInfoDto.regtime},
+            #{customerInfoDto.memberid},
+            #{customerInfoDto.email},
+            #{customerInfoDto.zip},
+            #{customerInfoDto.province},
+            #{customerInfoDto.city},
+            #{customerInfoDto.town},
+            #{customerInfoDto.ad})
+        </foreach>
+
+    </insert>
+</mapper>

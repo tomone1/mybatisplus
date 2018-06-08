@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd">
+	<!--订单导入-->
+	<bean id="wdgjTradeListApiBean" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="wdgjTradeListApi" />
+		</property>
+		<property name="targetMethod">
+			<value>saveWdjTradeInfo</value>
+		</property>
+		<property name="concurrent">
+			<value>false</value>
+		</property>
+	</bean>
+	<bean id="wdgjTradeListApiTask" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail">
+			<ref bean="wdgjTradeListApiBean" />
+		</property>
+		<property name="cronExpression">
+			<value>${wdgjTradeListcorn}</value>
+		</property>
+	</bean>
+
+<!-- 客戶導入-->
+
+	<bean id="wdgjCustomerListApiBean" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="wdgjcustomermemberApi" />
+		</property>
+		<property name="targetMethod">
+			<value>saveWdgjCustomerInfo</value>
+		</property>
+		<property name="concurrent">
+			<value>false</value>
+		</property>
+	</bean>
+	<bean id="wdgjCustomerListApiTask" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail">
+			<ref bean="wdgjCustomerListApiBean" />
+		</property>
+		<property name="cronExpression">
+			<value>${wdgjCustomerListApiBean}</value>
+		</property>
+	</bean>
+
+
+
+
+
+
+
+
+	<!-- 任务调度 -->
+	<bean lazy-init="false" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="triggers">
+			<list>
+				<ref bean="wdgjTradeListApiTask" />
+				<!--<ref bean="wdgjCustomerListApiTask" />-->
+			</list>
+		</property>
+	</bean>
+
+
+	<!--  temp add member up level for use   end-->
+
+</beans>

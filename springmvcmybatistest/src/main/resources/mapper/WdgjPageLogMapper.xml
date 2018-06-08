@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.diamond.mapper.WdgjPageLogMapper">
+    <select id="findPageLogByMethod" parameterType="string" resultType="map">
+      SELECT * from WDGJ_page_log t WHERE t.method=#{method}
+    </select>
+    <update id="updatePageLog" parameterType="map">
+        UPDATE WDGJ_page_log  t  SET t.pageno=#{pageno}
+          <if test="begintime !=null  ">
+              ,t.begintime=#{begintime}
+          </if>
+        <if test="endtime !=null  ">
+            ,t.endtime=#{endtime}
+        </if>
+          where t.method=#{method} and t.project_code=#{project_code} and t.searchtype=#{searchtype}
+    </update>
+    <insert id="saveTradeErrorLog" parameterType="map">
+       INSERT INTO wdgj_trade_error_log (
+	project_name,
+	searchtype,
+	pageNo,
+	error_info
+    )
+      VALUES
+	(#{project_name}, #{searchtype}, #{pageno}, #{error_info})
+    </insert>
+</mapper>

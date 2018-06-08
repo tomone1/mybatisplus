@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.diamond.mapper.WdgjApiSysParamsMapper">
+    <select id="findWdgjSysParamsByMethod" resultType="map"
+            parameterType="string">
+        SELECT  * FROM wdgj_api_sys_params WHERE
+        appkey=#{appkey}
+    </select>
+    <!-- 更改状态 -->
+    <update id="updateStatusToIsAll" parameterType="string">
+        UPDATE wdgj_api_sys_params SET status=#{status} where method=#{method}
+    </update>
+</mapper>
