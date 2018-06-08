@@ -5,6 +5,10 @@ import com.alibaba.fastjson.JSONObject;
 import com.diamond.model.pojo.JsonTradeRootBean;
 import com.diamond.services.WdgjPageLogService;
 import com.diamond.services.WdgjTradeInfoServices;
+import com.wdgj.api.trade.WdgjReturnTradeService;
+import com.wdgj.api.trade.impl.WdgjTradeConnectFail;
+import com.wdgj.api.trade.impl.WdgjTradeFail;
+import com.wdgj.api.trade.impl.WdgjTradeSuccess;
 import com.wdgj.trade.WdgjTradeList;
 import com.wdgj.util.QuaryTradeParams;
 import com.wdgj.util.WdgjInfoUtil;
@@ -32,14 +36,30 @@ public class WdgjTradeListApi {
   @Autowired
   private WdgjTradeInfoServices wdgjTradeInfoServices;
   @Autowired
+  private WdgjTradeFail wdgjTradeFail;
+  @Autowired
+  private WdgjTradeConnectFail wdgjTradeConnectFail;
+  @Autowired
+  private WdgjTradeSuccess wdgjTradeSuccess;
+  private WdgjReturnTradeService wdgjReturnTradeService;
+  @Autowired
   private WdgjPageLogService wdgjPageLogService;
+  public  WdgjReturnTradeService getWdgjReturnTradeService(String json){
+    Map map = JSON.parseObject(json, Map.class);
+    if("-1".equals(map.get("error_code")) || StringUtils.isEmpty(json)){
+     return wdgjTradeConnectFail;
+    }else if ("0".equals(map.get("returncode"))){
+      return wdgjTradeSuccess;
+    }else{
+      return wdgjTradeFail;
+    }
+  }
   public void saveWdjTradeInfo()throws  Exception {
     wdgjTradeInfoServices.trunctateWdgjTradeInfo();
     boolean isContimue = true;
     long startTime = System.currentTimeMillis();
     String method = "wdgj.trade.list.get";
     int ContinueNum = 0;// 重试次数  默认喂一次
-    //boolean reCover=false;
     List<Map<String, Object>> list = wdgjPageLogService.find(method);
     int invocationNum = 0;// 调用次数
     int invocationSingleNum = 0;// 调用次数
@@ -61,52 +81,23 @@ public class WdgjTradeListApi {
           log.info("链接重试{}", e);
         }
         Map map = JSON.parseObject(json, Map.class);
-        if ("-1".equals(map.get("error_code")) || StringUtils.isEmpty(json)) {
-          log.info("" + map.get("error_info"));
-          log.info("返回的json{}", json);
+        wdgjReturnTradeService=getWdgjReturnTradeService(json);
+        wdgjReturnTradeService.setContimue(isContimue);
+        wdgjReturnTradeService.setContinueNum(ContinueNum);
+        wdgjReturnTradeService.setJson(json);
+        wdgjReturnTradeService.setPageMap(pageMap);
+        wdgjReturnTradeService.setSumNum(sumNum);
+        wdgjReturnTradeService.setSumSingNum(sumSingNum);
+        wdgjReturnTradeService.setPageNo(pageNo);
+        wdgjReturnTradeService.save();
 
-          ContinueNum++;
-          /*
-          *  一下代码是 针对链接不上数据库 次试的次数 大与两次
-          * */
-          if (ContinueNum > 2) {
-            isContimue = false;
-
-          }
-        } else if ("0".equals(map.get("returncode"))) {
-          JsonTradeRootBean jsonTradeRootBean = JSON.parseObject(json, JsonTradeRootBean.class);
-          if(jsonTradeRootBean.getDatalist().size()>0){
-            pageNo++;
-          }
-          //  log.info(""+jsonTradeRootBean.getReturncode());
-          if (jsonTradeRootBean.getDatalist(pageMap.get(WdgjInfoUtil.SHOPIDS).toString()).size() > 0) {
-            try {
-              wdgjTradeInfoServices.saveTradeInfo(jsonTradeRootBean.getDatalist(pageMap.get(WdgjInfoUtil.SHOPIDS).toString()));
-              sumNum += Integer.parseInt(jsonTradeRootBean.getReturninfo());
-              sumSingNum += Integer.parseInt(jsonTradeRootBean.getReturninfo());
-              log.info("每页的数量 pageNum{},单总数量sumSingNum{},店铺名[{}],归档类型[{}]", jsonTradeRootBean.getReturninfo(), sumSingNum,pageMap.get(WdgjInfoUtil.PROJECT_NAME),pageMap.get(WdgjInfoUtil.SEARCHTYPE));
-            } catch(Exception e) {
-              pageMap.put(WdgjInfoUtil.ERROR_INFO,e.getMessage().substring(1,254));
-              wdgjPageLogService.saveTradeErrorLog(pageMap);
-              log.error("第{}页数据没有存进数据库 数据参数{},{}", pageNo, JSON.toJSON(pageMap),e);
-              isContimue = false; // 存不进去的话继续存
-            }
-
-          } else if("0".equals(jsonTradeRootBean.getReturninfo())) {
-            log.info("错误代码 {},{},{}", jsonTradeRootBean.getReturncode(), json);
-            pageMap.put(WdgjInfoUtil.BEGINTIME,new Date());
-            pageMap.put(WdgjInfoUtil.ENDTIME,null);
-            isContimue = false;
-          }else {
-            /*
-             没有数据继续
-             没有数据继续
-            * */
-            isContimue = true;
-          }
-        }else{
-          isContimue=false;
-        }
+        //赋值
+        isContimue=wdgjReturnTradeService.getContimue();
+        ContinueNum=wdgjReturnTradeService.getContinueNum();
+        sumNum=wdgjReturnTradeService.getSumNum();
+        sumSingNum=wdgjReturnTradeService.getSumSingNum();
+        pageMap=wdgjReturnTradeService.getPageMap();
+        pageNo=wdgjReturnTradeService.getPageNo();
       }
       pageMap.put(WdgjInfoUtil.PAGENO,pageNo);
       if(invocationSingleNum>0){
@@ -118,9 +109,21 @@ public class WdgjTradeListApi {
     }
     log.info("总的订单调用的次数是 invocationNum:{},存储的数量 sumNum :{}", invocationNum, sumNum);
     // 订单的迁移
-    wdgjTradeInfoServices.distinctTrade();
-    wdgjTradeInfoServices.moveTrade();
+    //wdgjTradeInfoServices.distinctTrade();
+    //wdgjTradeInfoServices.moveTrade();
 
   }
+
+//  public void setWdgjTradeFail(WdgjTradeFail wdgjTradeFail) {
+//    this.wdgjTradeFail = wdgjTradeFail;
+//  }
+//
+//  public void setWdgjTradeConnectFail(WdgjTradeConnectFail wdgjTradeConnectFail) {
+//    this.wdgjTradeConnectFail = wdgjTradeConnectFail;
+//  }
+//
+//  public void setWdgjTradeSuccess(WdgjTradeSuccess wdgjTradeSuccess) {
+//    this.wdgjTradeSuccess = wdgjTradeSuccess;
+//  }
 }
 
