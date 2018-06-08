@@ -51,7 +51,7 @@ public class WdgjTradeSuccess extends WdgjReturnTradeService {
       }
 
     } else if("0".equals(jsonTradeRootBean.getReturninfo())) {
-      log.info("错误代码 {},{},{}", jsonTradeRootBean.getReturncode(), json);
+      log.info("信息没有数据 代码 {},{},{}", jsonTradeRootBean.getReturncode(), json);
       pageMap.put(WdgjInfoUtil.BEGINTIME,new Date());
       pageMap.put(WdgjInfoUtil.ENDTIME,null);
       Contimue = false;

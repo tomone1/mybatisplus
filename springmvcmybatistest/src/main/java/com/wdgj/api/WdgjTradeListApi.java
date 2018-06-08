@@ -109,21 +109,10 @@ public class WdgjTradeListApi {
     }
     log.info("总的订单调用的次数是 invocationNum:{},存储的数量 sumNum :{}", invocationNum, sumNum);
     // 订单的迁移
-    //wdgjTradeInfoServices.distinctTrade();
-    //wdgjTradeInfoServices.moveTrade();
+    wdgjTradeInfoServices.distinctTrade();
+    wdgjTradeInfoServices.moveTrade();
 
   }
 
-//  public void setWdgjTradeFail(WdgjTradeFail wdgjTradeFail) {
-//    this.wdgjTradeFail = wdgjTradeFail;
-//  }
-//
-//  public void setWdgjTradeConnectFail(WdgjTradeConnectFail wdgjTradeConnectFail) {
-//    this.wdgjTradeConnectFail = wdgjTradeConnectFail;
-//  }
-//
-//  public void setWdgjTradeSuccess(WdgjTradeSuccess wdgjTradeSuccess) {
-//    this.wdgjTradeSuccess = wdgjTradeSuccess;
-//  }
 }
 
