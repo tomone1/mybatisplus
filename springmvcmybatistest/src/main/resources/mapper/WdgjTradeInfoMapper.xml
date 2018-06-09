@@ -102,12 +102,12 @@
        truncate wdgj_customer_info_temp;
        INSERT INTO  wdgj_customer_info_temp (SELECT * FROM wdgj_trade_info_temp);
 
-        INSERT INTO temp_id(SELECT id from wdgj_customer_info_temp tt WHERE EXISTS(SELECT
-        1    from (SELECT tradenick,MIN(id) ids from wdgj_customer_info_temp
-        GROUP BY tradenick HAVING count(0)>1
+        INSERT INTO temp_id(SELECT tt.id from wdgj_customer_info_temp tt WHERE EXISTS(SELECT
+        1    from (SELECT tel,MIN(id) ids from wdgj_customer_info_temp
+        GROUP BY tel HAVING count(0)>1
         ) t WHERE t.tel=tt.tel and tt.id!=t.ids));
     insert into temp_id
-     (SELECT t.id from wdgj_customer_info_temp t,wdgj_trade_info tt where
+     (SELECT t.id from wdgj_customer_info_temp t,wdgj_customer_info tt where
       tt.tel=t.tel);
        DELETE FROM wdgj_customer_info_temp where id in(SELECT id FROM temp_id);
     </delete>
@@ -120,7 +120,7 @@
 	  city,
 	  town,
 	  adr,
-	  zip) VALUES (SELECT
+	  zip)  SELECT
         tradenick,
         sndto,
         tel,
@@ -129,13 +129,73 @@
         town,
         adr,
         zip
-        FROM wdgj_customer_info_temp)
+        FROM wdgj_customer_info_temp
     </insert>
     <!--客户信息的修改-->
-    <!--<update id="updateCustomerInfo">-->
-      <!--truncate temp_id;-->
-      <!--INSERT INTO temp_id(SELECT DISTINCT tel from wdgj_trade_info_temp);-->
-      <!--update wdgj_customer_info t set sndto-->
-      <!--SELECT * FROM  wdgj_trade_info t,temp_id tt WHERE t.tel=tt.id  GROUP  tel,nickname,-->
-    <!--</update>-->
+    <update id="updateCustomerInfo">
+      truncate temp_id;
+      TRUNCATE TABLE wdgj_customer_info_temp_temp;
+      INSERT INTO temp_id(SELECT DISTINCT tel from wdgj_trade_info_temp);
+      INSERT INTO wdgj_customer_info_temp_temp (SELECT
+	  COUNT(*) tradenum ,
+
+      max(tradetime) tradetime,
+      tradenick,
+      sndto,
+      tel,
+      province,
+        city,
+        town,
+        adr,
+        zip
+    FROM
+        wdgj_trade_info t,
+        temp_id tt
+    WHERE
+        t.tel = tt.id
+    GROUP by tradenick,
+            sndto,
+            tel,
+            province,
+            city,
+            town,
+            adr,
+            zip);
+
+
+      update wdgj_customer_info t,
+       (SELECT ff.* FROM(SELECT h2.tradenick,
+        h2.sndto,
+        h2.tel,
+        h2.province,
+        h2.city,
+        h2.town,
+        h2.adr,
+        h2.zip FROM  wdgj_customer_info_temp_temp h2,
+(SELECT h.tel,h.tradenum FROM(SELECT dd.* from wdgj_customer_info_temp_temp dd,(SELECT tel,max(tradenum) tradenum,max(tradetime) maxnum from wdgj_customer_info_temp_temp group BY tel having count(*)>1)n
+WHERE dd.tel=n.tel AND dd.tradenum=n.tradenum)h GROUP BY h.tel HAVING count(0)=1)h3 where h2.tel=h3.tel and h2.tradenum=h3.tradenum
+UNION ALL
+SELECT t.tradenick,
+        t.sndto,
+        t.tel,
+       t.province,
+       t.city,
+        t.town,
+        t.adr,
+        t.zip FROM wdgj_trade_info t , (SELECT h.tel,h.tradenum,h.tradetime FROM(SELECT dd.* from wdgj_customer_info_temp_temp dd,(SELECT tel,max(tradenum) tradenum,max(tradetime) maxnum from wdgj_customer_info_temp_temp group BY tel having count(*)>1)n
+WHERE dd.tel=n.tel AND dd.tradenum=n.tradenum)h GROUP BY h.tel HAVING count(0)>1)hi
+WHERE hi.tel=t.tel and t.tradetime=hi.tradetime) ff)ss
+       set t.tradenick=ss.tradenick,
+        t.sndto=ss.sndto,
+        t.tel=ss.tel,
+        t.province=ss.province,
+        t.city=ss.city,
+        t.town=ss.town,
+        t.adr=ss.adr,
+        t.zip=ss.zip
+        WHERE  t.tel=ss.tel;
+UPDATE wdgj_customer_info t,(SELECT t.tel tel, count(0) buynum, sum(goodstotal) sumAmount FROM wdgj_trade_info t,temp_id tp WHERE t.tel=tp.id  GROUP BY tel) hi
+SET t.buynum=hi.buynum,t.sumAmount=hi.sumAmount
+WHERE t.tel=hi.tel;
+</update>
 </mapper>

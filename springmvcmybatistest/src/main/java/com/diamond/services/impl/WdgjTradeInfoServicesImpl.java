@@ -67,4 +67,9 @@ public class WdgjTradeInfoServicesImpl implements WdgjTradeInfoServices{
   public void moveCustomer() {
     wdgjTradeInfoMapper.moveCustomer();
   }
+
+  @Override
+  public void updateCustomerInfo() {
+    wdgjTradeInfoMapper.updateCustomerInfo();
+  }
 }

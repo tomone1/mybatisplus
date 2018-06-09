@@ -112,7 +112,9 @@ public class WdgjTradeListApi {
     // 订单的迁移
     wdgjTradeInfoServices.distinctTrade();
     wdgjTradeInfoServices.moveTrade();
-
+    wdgjTradeInfoServices.distinctCustomer();
+    wdgjTradeInfoServices.moveCustomer();
+    wdgjTradeInfoServices.updateCustomerInfo();
   }
 
 }

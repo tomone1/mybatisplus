@@ -19,5 +19,6 @@ public interface WdgjTradeInfoServices {
   public void moveTrade();
   public void distinctCustomer();
   public void moveCustomer();
+  public void updateCustomerInfo();
 
 }
