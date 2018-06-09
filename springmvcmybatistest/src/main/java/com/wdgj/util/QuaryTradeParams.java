@@ -37,6 +37,7 @@ public class QuaryTradeParams {
       }else{
         this.endtime=LocalDate.now().toString();
       }
+      System.out.println(optional.get().get(WdgjInfoUtil.SEARCHTYPE));
       if(optional.get().get(WdgjInfoUtil.SEARCHTYPE)!=null){
       this.searchtype=Integer.parseInt(optional.get().get(WdgjInfoUtil.SEARCHTYPE).toString());
       }else{
