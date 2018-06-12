@@ -83,7 +83,7 @@
         truncate temp_id;
         INSERT INTO temp_id(SELECT id from wdgj_trade_info_temp tt WHERE EXISTS(SELECT
         1    from (SELECT tradeno2,MIN(id) ids from wdgj_trade_info_temp
-        GROUP BY tradeno2 HAVING count(0)>1
+        GROUP BY tradeno2
         ) t WHERE t.tradeno2=tt.tradeno2 and tt.id!=t.ids));
     insert into temp_id
      (SELECT t.id from wdgj_trade_info_temp t,wdgj_trade_info tt where
@@ -150,7 +150,7 @@
 
         INSERT INTO temp_id(SELECT tt.id from wdgj_customer_info_temp tt WHERE EXISTS(SELECT
         1    from (SELECT tel,MIN(id) ids from wdgj_customer_info_temp
-        GROUP BY tel HAVING count(0)>1
+        GROUP BY tel
         ) t WHERE t.tel=tt.tel and tt.id!=t.ids));
     insert into temp_id
      (SELECT t.id from wdgj_customer_info_temp t,wdgj_customer_info tt where

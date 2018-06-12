@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.diamond.mapper.KingdeeProductMapper">
+    <insert id="save" parameterType="list">
+        truncate kingdee_product_temp;
+        INSERT INTO kingdee_product_temp (
+        product_code,
+        product_name,
+        product_categories_1,
+        product_categories_2,
+        product_categories_3,
+        product_type,
+        specification,
+        expiration_date,
+        unit,
+        bar_code,
+        packing_number,
+        volume,
+        gross_wt,
+        main_suppliers) VALUES
+        <foreach collection="list" item="product" index="index"
+                 open="" close="" separator=",">
+            (
+            #{product.productCode},
+            #{product.productName},
+            #{product.productCategories1},
+            #{product.productCategories2},
+            #{product.productCategories3},
+            #{product.productType},
+            #{product.specification},
+            #{product.expirationDate},
+            #{product.unit},
+            #{product.barCode},
+            #{product.packingNumber},
+            #{product.volume},
+            #{product.grossWt},
+            #{product.mainSuppliers}
+            )
+        </foreach>
+    </insert>
+    <delete id="distinctProduct">
+       DELETE  from kingdee_product_temp
+        where id in
+        (SELECT s.id from( SELECT id from kingdee_product_temp st WHERE  NOT EXISTS (SELECT  1 FROM (SELECT  min(id) id ,product_code from kingdee_product_temp t GROUP by product_code) it
+        WHERE it.id=st.id
+        )
+        UNION ALL
+        SELECT t.id from kingdee_product_temp t,kingdee_product tt WHERE tt.product_code=t.product_code) s)
+    </delete>
+    <insert id="moveProduct">
+        INSERT  INTO  kingdee_product(
+        product_code,
+        product_name,
+        product_categories_1,
+        product_categories_2,
+        product_categories_3,
+        product_type,
+        specification,
+        expiration_date,
+        unit,
+        bar_code,
+        packing_number,
+        volume,
+        gross_wt,
+        main_suppliers,
+        reserved_field1,
+        reserved_field2,
+        reserved_field3
+        )  SELECT
+            product_code,
+            product_name,
+            product_categories_1,
+            product_categories_2,
+            product_categories_3,
+            product_type,
+            specification,
+            expiration_date,
+            unit,
+            bar_code,
+            packing_number,
+            volume,
+            gross_wt,
+            main_suppliers,
+            reserved_field1,
+            reserved_field2,
+            reserved_field3
+        FROM kingdee_product_temp
+    </insert>
+</mapper>

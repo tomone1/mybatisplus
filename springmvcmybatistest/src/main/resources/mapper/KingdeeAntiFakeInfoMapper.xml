@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.diamond.mapper.KingdeeAntiFakeInfoMapper">
+    <insert id="save" parameterType="list">
+      truncate kingdee_anti_fake_info_temp;
+      INSERT  INTO kingdee_anti_fake_info_temp(
+        ant_fake_code,
+         member_unionId,
+         member_openID,
+         query_date,
+         box_barcode,
+         carton_bar_code,
+         product_code,
+         product_name,
+         bar_code,
+         batch_no,
+         expire_date,
+         customer_name,
+         sell_order_no,
+         reserved_field1,
+         reserved_field2,
+         reserved_field3
+      ) VALUES
+        <foreach collection="list" item="product" index="index"
+                 open="" close="" separator=",">
+        (
+        #{antiFake.productCode},
+        #{antiFake.productName},
+        #{antiFake.productCategories1},
+        #{antiFake.productCategories2},
+        #{antiFake.productCategories3},
+        #{antiFake.productType},
+        #{antiFake.specification},
+        #{antiFake.expirationDate},
+        #{antiFake.unit},
+        #{antiFake.barCode},
+        #{antiFake.packingNumber},
+        #{antiFake.volume},
+        #{antiFake.grossWt},
+        #{antiFake.mainSuppliers},
+        #{antiFake.reservedField1},
+        #{antiFake.reservedField2},
+        #{antiFake.reservedField3}
+        )
+        </foreach>
+    </insert>
+    <delete id="distinctAntiFakeInfo">
+      DELETE  from kingdee_anti_fake_info_temp
+        where id in
+        (SELECT s.id from( SELECT id from kingdee_anti_fake_info_temp st WHERE  NOT EXISTS (SELECT  1 FROM (SELECT  min(id) id  from kingdee_anti_fake_info_temp t GROUP by ant_fake_code) it
+        WHERE it.id=st.id
+        )
+        UNION ALL
+        SELECT t.id from kingdee_product_temp t,kingdee_product tt WHERE tt.ant_fake_code=t.ant_fake_code) s)
+    </delete>
+    <insert id="moveAntiFakeInfo">
+        INSERT  INTO  kingdee_anti_fake_info(
+         ant_fake_code,
+         member_unionId,
+         member_openID,
+         query_date,
+         box_barcode,
+         carton_bar_code,
+         product_code,
+         product_name,
+         bar_code,
+         batch_no,
+         expire_date,
+         customer_name,
+         sell_order_no,
+         reserved_field1,
+         reserved_field2,
+         reserved_field3)
+        SELECT
+         ant_fake_code,
+         member_unionId,
+         member_openID,
+         query_date,
+         box_barcode,
+         carton_bar_code,
+         product_code,
+         product_name,
+         bar_code,
+         batch_no,
+         expire_date,
+         customer_name,
+         sell_order_no,
+         reserved_field1,
+         reserved_field2,
+         reserved_field3
+        FROM
+        kingdee_anti_fake_info_temp
+    </insert>
+</mapper>
