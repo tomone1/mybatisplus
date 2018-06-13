@@ -81,7 +81,6 @@ public class WdgjTradeListApi {
           log.info("链接重试{}", e);
         }
         Map map = JSON.parseObject(json, Map.class);
-        log.info(json);
         wdgjReturnTradeService=getWdgjReturnTradeService(json);
         wdgjReturnTradeService.setContimue(isContimue);
         wdgjReturnTradeService.setContinueNum(ContinueNum);
@@ -102,7 +101,7 @@ public class WdgjTradeListApi {
       }
       pageMap.put(WdgjInfoUtil.PAGENO,pageNo);
       if(invocationSingleNum>0){
-      wdgjPageLogService.save(pageMap);// 更改页码 开始日期 结束日期
+        wdgjPageLogService.save(pageMap);// 更改页码 开始日期 结束日期
       }
       log.info("工程名[{}]归档类型[{}]订单调用的次数是 invocationSingleNum:{},存储的数量 sumSingNum :{}",pageMap.get(WdgjInfoUtil.PROJECT_NAME) ,pageMap.get(WdgjInfoUtil.SEARCHTYPE),invocationSingleNum, sumSingNum);
       sumSingNum=0;

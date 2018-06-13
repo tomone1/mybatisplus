@@ -18,7 +18,7 @@
        INSERT INTO wdgj_trade_error_log (
 	project_name,
 	searchtype,
-	pageNo,
+	pageno,
 	error_info
     )
       VALUES

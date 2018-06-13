@@ -4,6 +4,7 @@ import com.mysql.jdbc.StringUtils;
 import lombok.Data;
 import org.apache.derby.iapi.util.StringUtil;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -30,7 +31,7 @@ public class WdgjTradeInfo {
   private String logisticname;
   private String tradetime;
   private String shopname;
-  private String goodstotal;
+  private BigDecimal goodstotal;
   private String tradenick;
   private String zip;
   private List<WdgjTradeItemInfo> goodslist;

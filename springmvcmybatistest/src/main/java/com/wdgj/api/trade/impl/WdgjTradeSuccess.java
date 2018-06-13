@@ -29,9 +29,7 @@ public class WdgjTradeSuccess extends WdgjReturnTradeService {
   @Override
   public void save() {
     JsonTradeRootBean jsonTradeRootBean = JSON.parseObject(json, JsonTradeRootBean.class);
-    if(jsonTradeRootBean.getDatalist().size()>0){
-      pageNo++;
-    }
+
     /*
       过滤店铺的数据
     * */
@@ -50,7 +48,7 @@ public class WdgjTradeSuccess extends WdgjReturnTradeService {
         Contimue = false; // 存不进去的话继续存
       }
 
-    } else if("0".equals(jsonTradeRootBean.getReturninfo())) {
+    } else if("0".equals(jsonTradeRootBean.getReturninfo())) { // json 很短
       log.info("信息没有数据 代码 {},{},{}", jsonTradeRootBean.getReturncode(), json);
       pageMap.put(WdgjInfoUtil.BEGINTIME,new Date());
       pageMap.put(WdgjInfoUtil.ENDTIME,null);
@@ -58,5 +56,9 @@ public class WdgjTradeSuccess extends WdgjReturnTradeService {
     }else {
       Contimue = true;
     }
+    if(jsonTradeRootBean.getDatalist().size()>0&& Contimue){
+      pageNo++;
+    }
   }
+
 }

@@ -38,14 +38,30 @@ public class KingdeeAntiFakeInfo {
   public void setDto(String str,int row){
 
     String[] antiFake=str.split("\t");
-    this.antFakeCode = getBigDecimal(antiFake[0],"防伪码0");
-    this.memberUnionId = getString(antiFake[1]);
-    this.memberOpenID = getString(antiFake[2]);
-    this.queryDate = getString(antiFake[3]);
-    this.boxBarcode = getBigDecimal(antiFake[4],"盒条码4");
-    this.cartonBarCode = getBigDecimal(antiFake[5],"箱条码5");
-    this.productCode = getString(antiFake[6]);
-    this.productName = getString(antiFake[7]);
+    if (antiFake.length>=1){
+      this.antFakeCode = getBigDecimal(antiFake[0],"防伪码0");
+    }
+    if (antiFake.length>=2){
+      this.memberUnionId = getString(antiFake[1]);
+    }
+    if (antiFake.length>=3){
+      this.memberOpenID = getString(antiFake[2]);
+    }
+    if (antiFake.length>=4){
+      this.queryDate = getString(antiFake[3]);
+    }
+    if (antiFake.length>=5){
+      this.boxBarcode = getBigDecimal(antiFake[4],"盒条码4");
+    }
+    if (antiFake.length>=6){
+      this.cartonBarCode = getBigDecimal(antiFake[5],"箱条码5");
+    }
+    if (antiFake.length>=7){
+      this.productCode = getString(antiFake[6]);
+    }
+    if(antiFake.length>=8){
+      this.productName = getString(antiFake[7]);
+    }
     if(antiFake.length>=9){
       this.barCode = getBigDecimal(antiFake[8],"条形码8");
     }
