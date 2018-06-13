@@ -16,7 +16,7 @@ import java.util.List;
  */
 @Service
 public class AntiFakeInfoImport {
-  private static final String path = "E:\\data\\森田\\";
+  private static final String path = "E:\\data\\森田\\kingdee\\";
   @Autowired
   private KingdeeAntiFakeInfoServices kingdeeAntiFakeInfoServices;
   public  void  loadFile(){
@@ -49,7 +49,7 @@ public class AntiFakeInfoImport {
           list.add(antiFakeInfo);
           if(j==1000){
             kingdeeAntiFakeInfoServices.save(list);
-            kingdeeAntiFakeInfoServices.distinctAntiFakeInfo();
+            //kingdeeAntiFakeInfoServices.distinctAntiFakeInfo();
             kingdeeAntiFakeInfoServices.moveAntiFakeInfo();
             list=new ArrayList();
             j=0;
@@ -57,7 +57,7 @@ public class AntiFakeInfoImport {
         }
         if(j>0){
           kingdeeAntiFakeInfoServices.save(list);
-          kingdeeAntiFakeInfoServices.distinctAntiFakeInfo();
+          //kingdeeAntiFakeInfoServices.distinctAntiFakeInfo();
           kingdeeAntiFakeInfoServices.moveAntiFakeInfo();
         }
         read.close();

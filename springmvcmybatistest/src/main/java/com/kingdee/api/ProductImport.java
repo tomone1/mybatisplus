@@ -17,7 +17,7 @@ import java.util.List;
 public class ProductImport {
   @Autowired
   private KingdeeProductServices kingdeeProductServices;
-  private static final String path = "E:\\data\\森田\\";
+  private static final String path = "E:\\data\\森田\\kingdee\\";
   public  void  loadFile(){
     List<File> list=getFile();
     if(list.size()>0){

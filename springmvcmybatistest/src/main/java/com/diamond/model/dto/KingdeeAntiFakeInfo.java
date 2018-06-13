@@ -2,6 +2,7 @@ package com.diamond.model.dto;
 
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 
 import java.math.BigDecimal;
@@ -38,27 +39,27 @@ public class KingdeeAntiFakeInfo {
 
     String[] antiFake=str.split("\t");
     this.antFakeCode = getBigDecimal(antiFake[0],"防伪码0");
-    this.memberUnionId = antiFake[1];
-    this.memberOpenID = antiFake[2];
-    this.queryDate = antiFake[3];
+    this.memberUnionId = getString(antiFake[1]);
+    this.memberOpenID = getString(antiFake[2]);
+    this.queryDate = getString(antiFake[3]);
     this.boxBarcode = getBigDecimal(antiFake[4],"盒条码4");
     this.cartonBarCode = getBigDecimal(antiFake[5],"箱条码5");
-    this.productCode = antiFake[6];
-    this.productName = antiFake[7];
+    this.productCode = getString(antiFake[6]);
+    this.productName = getString(antiFake[7]);
     if(antiFake.length>=9){
       this.barCode = getBigDecimal(antiFake[8],"条形码8");
     }
     if(antiFake.length>=10){
-      this.batchNo = antiFake[9];
+      this.batchNo = getString(antiFake[9]);
     }
     if(antiFake.length>=11){
-       this.expireDate = antiFake[10];
+       this.expireDate = getString(antiFake[10]);
     }
     if(antiFake.length>=12){
-     this.customerDate = antiFake[11];
+     this.customerDate = getString(antiFake[11]);
     }
     if(antiFake.length>=13){
-      this.sellOrderNo = antiFake[12];
+      this.sellOrderNo = getString(antiFake[12]);
     }
 
   }
@@ -70,15 +71,23 @@ public class KingdeeAntiFakeInfo {
       if(StringUtils.isEmpty(str)){
         log.info(info+"字段是空的");
         return new BigDecimal(0);
+      }else if("NULL".equals(str)){
+        return null;
       }else{
         return new BigDecimal(str);
+
       }
     }catch(Exception e){
-      log.error(info+"字段不是数字类型 非法字符"+e);
+      log.error(info+"[{}]字段不是数字类型 非法字符"+e,str);
       return null;
     }
 
   }
-
-
+  public String getString(String str){
+    if("NULL".equals(str)){
+      return null;
+    }else{
+      return str;
+    }
+  }
 }
