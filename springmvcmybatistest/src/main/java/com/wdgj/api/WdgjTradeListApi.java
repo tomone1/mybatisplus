@@ -70,7 +70,7 @@ public class WdgjTradeListApi {
       int pageNo = params.getPageNo();
       isContimue = true;
       ContinueNum = 0;// 重试次数
-      while (isContimue && pageNo<10) {
+      while (isContimue && pageNo<1000) {
         String json = "";
         params.setPageNo(pageNo);
         try {

@@ -249,7 +249,7 @@ WHERE dd.tel=n.tel AND dd.tradenum=n.tradenum and dd.shopid=n.shopid)h GROUP BY 
 WHERE hi.tel=t.tel and t.tradetime=hi.tradetime and hi.shopid=t.shopid) ff)ss
 
         WHERE  t.tel=ss.tel and t.shopid=ss.shopid;
-UPDATE wdgj_customer_info t SET buynum=hi.buynum,sumAmount=hi.sumAmount FROM (SELECT t.tel tel,t.shopid, count(0) buynum, sum(goodstotal) sumAmount FROM wdgj_trade_info t,temp_id tp WHERE t.tel=tp.id  GROUP BY t.tel,t.shopid) hi
+UPDATE wdgj_customer_info t SET buynum=hi.buynum,sumAmount=hi.sumAmount FROM (SELECT t.tel tel,t.shopid, count(0) buynum, sum(goodstotal) sumAmount FROM wdgj_trade_info t,temp_id tp WHERE t.tel=tp.tel AND t.shopid=tp.shopid GROUP BY t.tel,t.shopid) hi
 WHERE t.tel=hi.tel and t.shopid=hi.shopid;
 </update>
 </mapper>
