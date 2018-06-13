@@ -5,8 +5,8 @@
       truncate kingdee_anti_fake_info_temp;
       INSERT  INTO kingdee_anti_fake_info_temp(
         ant_fake_code,
-         member_unionId,
-         member_openID,
+         member_unionid,
+         member_openid,
          query_date,
          box_barcode,
          carton_bar_code,
@@ -21,26 +21,25 @@
          reserved_field2,
          reserved_field3
       ) VALUES
-        <foreach collection="list" item="product" index="index"
+        <foreach collection="list" item="antiFake" index="index"
                  open="" close="" separator=",">
         (
-        #{antiFake.productCode},
-        #{antiFake.productName},
-        #{antiFake.productCategories1},
-        #{antiFake.productCategories2},
-        #{antiFake.productCategories3},
-        #{antiFake.productType},
-        #{antiFake.specification},
-        #{antiFake.expirationDate},
-        #{antiFake.unit},
-        #{antiFake.barCode},
-        #{antiFake.packingNumber},
-        #{antiFake.volume},
-        #{antiFake.grossWt},
-        #{antiFake.mainSuppliers},
-        #{antiFake.reservedField1},
-        #{antiFake.reservedField2},
-        #{antiFake.reservedField3}
+            #{antiFake.antFakeCode},
+            #{antiFake.memberUnionId},
+            #{antiFake.memberOpenID},
+            #{antiFake.queryDate},
+            #{antiFake.boxBarcode},
+            #{antiFake.cartonBarCode},
+            #{antiFake.productCode},
+            #{antiFake.productName},
+            #{antiFake.barCode},
+            #{antiFake.batchNo},
+            #{antiFake.expireDate},
+            #{antiFake.customerDate},
+            #{antiFake.sellOrderNo},
+            #{antiFake.reservedField1},
+            #{antiFake.reservedField2},
+            #{antiFake.reservedField3}
         )
         </foreach>
     </insert>
@@ -51,7 +50,7 @@
         WHERE it.id=st.id
         )
         UNION ALL
-        SELECT t.id from kingdee_product_temp t,kingdee_product tt WHERE tt.ant_fake_code=t.ant_fake_code) s)
+        SELECT t.id from kingdee_anti_fake_info_temp t,kingdee_anti_fake_info tt WHERE tt.ant_fake_code=t.ant_fake_code) s)
     </delete>
     <insert id="moveAntiFakeInfo">
         INSERT  INTO  kingdee_anti_fake_info(

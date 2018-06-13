@@ -2,9 +2,13 @@ package com.kingdee.api;
 
 import com.diamond.model.dto.KingdeeAntiFakeInfo;
 import com.diamond.model.dto.KingdeeProduct;
+import com.diamond.services.KingdeeAntiFakeInfoServices;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @Author tom
@@ -12,42 +16,19 @@ import java.io.*;
  */
 @Service
 public class AntiFakeInfoImport {
-  private static final String path = "E:\\data\\森田\\SKU_201709291553470.txt";
-  public static final String openFileStyle = "r";
-  public static final String fieldLimitChar = ",";
-  public static final int fieldAllCount = 9;
-  private int count;
-  public void loadFile() throws Exception{
-    String path="";
-    String openFileStyle = "r";
-    String fieldLimitChar = ",";
-    int fieldAllCount = 9;
-    RandomAccessFile raf = new RandomAccessFile(path, openFileStyle);
-    String line_record = raf.readLine();
-    while (line_record != null) {
-      parseRecord(line_record);
-      line_record = raf.readLine();
-    }
-    System.out.println("共有合法的记录" + count + "条");
-  }
-  private void parseRecord(String line_record) throws Exception {
-    //拆分记录
-    String[] fields = line_record.split(fieldLimitChar);
-    if (fields.length == fieldAllCount) {
-      count++;
-    }
-  }
-  private String tranStr(String oldstr) {
-    String newstr = "";
-    try {
-      newstr = new String(oldstr.getBytes("ISO-8859-1"), "GBK");
-    } catch (UnsupportedEncodingException e) {
-      e.printStackTrace();
-    }
-    return newstr;
+  private static final String path = "E:\\data\\森田\\";
+  @Autowired
+  private KingdeeAntiFakeInfoServices kingdeeAntiFakeInfoServices;
+  public  void  loadFile(){
+    List<File> list=getFile();
+    if(list.size()>0){
+      for (int i = 0; i <list.size() ; i++) {
 
+        readTxtFile(path+list.get(i).getName());
+      }
+    }
   }
-  public static void readTxtFile(String filePath) {
+  public  void readTxtFile(String filePath) {
 
     try {
       String encoding = "GBK";
@@ -58,10 +39,26 @@ public class AntiFakeInfoImport {
         BufferedReader bufferedReader = new BufferedReader(read);
         String lineTxt = null;
         int i=0;
+        int j=0;
+        List list=new ArrayList();
         while ((lineTxt = bufferedReader.readLine()) != null) {
           i++;
+          j++;
           KingdeeAntiFakeInfo antiFakeInfo=new KingdeeAntiFakeInfo();
           antiFakeInfo.setDto(lineTxt,i);
+          list.add(antiFakeInfo);
+          if(j==1000){
+            kingdeeAntiFakeInfoServices.save(list);
+            kingdeeAntiFakeInfoServices.distinctAntiFakeInfo();
+            kingdeeAntiFakeInfoServices.moveAntiFakeInfo();
+            list=new ArrayList();
+            j=0;
+          }
+        }
+        if(j>0){
+          kingdeeAntiFakeInfoServices.save(list);
+          kingdeeAntiFakeInfoServices.distinctAntiFakeInfo();
+          kingdeeAntiFakeInfoServices.moveAntiFakeInfo();
         }
         read.close();
       } else {
@@ -73,7 +70,20 @@ public class AntiFakeInfoImport {
     }
   }
 
-  public static void main(String[] args) throws Exception {
-    AntiFakeInfoImport.readTxtFile(path);
+  public List<File> getFile(){
+    File file = new File(path);//File类型可以是文件也可以是文件夹
+    File[] fileList = file.listFiles();//将该目录下的所有文件放置在一个File类型的数组中
+    List<File> wjList = new ArrayList<>();//新建一个文件集合
+    for (int i = 0; i < fileList.length; i++) {
+      if (fileList[i].isFile()) {//判断是否为文件
+        String name=fileList[i].getName();
+        if(name.startsWith("CRM_")&& name.endsWith(".txt")){
+          wjList.add(fileList[i]);
+          System.out.println(fileList[i].getName());
+        }
+
+      }
+    }
+    return  wjList;
   }
 }

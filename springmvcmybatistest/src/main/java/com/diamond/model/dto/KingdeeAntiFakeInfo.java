@@ -37,23 +37,29 @@ public class KingdeeAntiFakeInfo {
   public void setDto(String str,int row){
 
     String[] antiFake=str.split("\t");
-    if(antiFake.length!=13){
-      log.info("该行非法[{}],长度为[{}]"+str,row,antiFake.length);
-      return;
-    }
     this.antFakeCode = getBigDecimal(antiFake[0],"防伪码0");
     this.memberUnionId = antiFake[1];
     this.memberOpenID = antiFake[2];
     this.queryDate = antiFake[3];
-    this.boxBarcode = getBigDecimal(antiFake[4],"");
-    this.cartonBarCode = getBigDecimal(antiFake[5],"");
+    this.boxBarcode = getBigDecimal(antiFake[4],"盒条码4");
+    this.cartonBarCode = getBigDecimal(antiFake[5],"箱条码5");
     this.productCode = antiFake[6];
     this.productName = antiFake[7];
-    this.barCode = getBigDecimal(antiFake[8],"");
-    this.batchNo = antiFake[9];
-    this.expireDate = antiFake[10];
-    this.customerDate = antiFake[11];
-    this.sellOrderNo = antiFake[12];
+    if(antiFake.length>=9){
+      this.barCode = getBigDecimal(antiFake[8],"条形码8");
+    }
+    if(antiFake.length>=10){
+      this.batchNo = antiFake[9];
+    }
+    if(antiFake.length>=11){
+       this.expireDate = antiFake[10];
+    }
+    if(antiFake.length>=12){
+     this.customerDate = antiFake[11];
+    }
+    if(antiFake.length>=13){
+      this.sellOrderNo = antiFake[12];
+    }
 
   }
 
