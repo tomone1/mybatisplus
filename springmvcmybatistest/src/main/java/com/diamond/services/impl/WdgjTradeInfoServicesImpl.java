@@ -25,6 +25,7 @@ public class WdgjTradeInfoServicesImpl implements WdgjTradeInfoServices{
   private WdgjTradeInfoMapper wdgjTradeInfoMapper;
   @Transactional
   public void saveTradeInfo(List<WdgjTradeInfo>list){
+    wdgjTradeInfoMapper.trunctateWdgjTradeInfo();
     wdgjTradeInfoMapper.saveWdgjTradeInfo(list);
     List<WdgjTradeItemInfo> listItem=new ArrayList<>();
     for (int i = 0; i <list.size() ; i++) {
@@ -40,7 +41,11 @@ public class WdgjTradeInfoServicesImpl implements WdgjTradeInfoServices{
       wdgjTradeInfoMapper.saveWdgjTradeIntemInfo(listItem);
     }
 
-
+    wdgjTradeInfoMapper.distinctTrade();
+    wdgjTradeInfoMapper.moveTrade();
+    wdgjTradeInfoMapper.distinctCustomer();
+    wdgjTradeInfoMapper.moveCustomer();
+    wdgjTradeInfoMapper.updateCustomerInfo();
   }
 
   @Override

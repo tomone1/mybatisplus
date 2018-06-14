@@ -45,17 +45,17 @@ public class WdgjTradeListApi {
   @Autowired
   private WdgjPageLogService wdgjPageLogService;
   public  WdgjReturnTradeService getWdgjReturnTradeService(String json){
+    if(StringUtils.isEmpty(json)){
+      return wdgjTradeConnectFail;
+    }
     Map map = JSON.parseObject(json, Map.class);
-    if("-1".equals(map.get("error_code")) || StringUtils.isEmpty(json)){
-     return wdgjTradeConnectFail;
-    }else if ("0".equals(map.get("returncode"))){
+    if ("0".equals(map.get("returncode"))){
       return wdgjTradeSuccess;
     }else{
       return wdgjTradeFail;
     }
   }
   public void saveWdjTradeInfo()throws  Exception {
-    wdgjTradeInfoServices.trunctateWdgjTradeInfo();
     boolean isContimue = true;
     long startTime = System.currentTimeMillis();
     String method = "wdgj.trade.list.get";
@@ -78,7 +78,14 @@ public class WdgjTradeListApi {
           invocationNum++;
           invocationSingleNum++;
         } catch(Exception e) {
-          log.info("链接重试{}", e);
+          log.info("链接重试{},{}", e,json);
+          wdgjReturnTradeService=getWdgjReturnTradeService(json);
+          wdgjReturnTradeService.setContimue(isContimue);
+          wdgjReturnTradeService.setContinueNum(ContinueNum);
+          wdgjReturnTradeService.save();
+          isContimue=wdgjReturnTradeService.getContimue();
+          ContinueNum=wdgjReturnTradeService.getContinueNum();
+          continue;
         }
         Map map = JSON.parseObject(json, Map.class);
         wdgjReturnTradeService=getWdgjReturnTradeService(json);
@@ -106,14 +113,16 @@ public class WdgjTradeListApi {
       log.info("工程名[{}]归档类型[{}]订单调用的次数是 invocationSingleNum:{},存储的数量 sumSingNum :{}",pageMap.get(WdgjInfoUtil.PROJECT_NAME) ,pageMap.get(WdgjInfoUtil.SEARCHTYPE),invocationSingleNum, sumSingNum);
       sumSingNum=0;
       invocationSingleNum=0;
+
+     /* wdgjTradeInfoServices.distinctTrade();
+      wdgjTradeInfoServices.moveTrade();
+      wdgjTradeInfoServices.distinctCustomer();
+      wdgjTradeInfoServices.moveCustomer();
+      wdgjTradeInfoServices.updateCustomerInfo();*/
     }
     log.info("总的订单调用的次数是 invocationNum:{},存储的数量 sumNum :{}", invocationNum, sumNum);
     // 订单的迁移
-    wdgjTradeInfoServices.distinctTrade();
-    wdgjTradeInfoServices.moveTrade();
-    wdgjTradeInfoServices.distinctCustomer();
-    wdgjTradeInfoServices.moveCustomer();
-    wdgjTradeInfoServices.updateCustomerInfo();
+
   }
 
 }
